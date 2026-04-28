@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#00ff88">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="/icon.png">
+    <title>Trilhas de Alta Performance</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="dark-mode">
+    <div class="app-container">
+        <header>
+            <div class="logo-container">
+                <img src="logo.png" alt="Frutos de Goiás" id="main-logo">
+            </div>
+            <h1>Trilhas de Alta Performance</h1>
+            <div class="score-badge" id="total-score-badge">
+                <span class="label">Nota Final</span>
+                <span class="value" id="final-score">0.0</span>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <!-- Information Section -->
+            <section id="step-0" class="card active">
+                <h2>Identificação da Visita</h2>
+                <div class="form-group">
+                    <label for="unit_name">Nome da Unidade</label>
+                    <input type="text" id="unit_name" placeholder="Ex: Frutos de Goiás - Cuiabá" required>
+                </div>
+                <div class="form-group">
+                    <label for="city">Cidade</label>
+                    <input type="text" id="city" placeholder="Cidade da unidade" required>
+                </div>
+                <div class="form-group">
+                    <label for="licensee_name">Licenciado responsável</label>
+                    <input type="text" id="licensee_name" placeholder="Nome do licenciado" required>
+                </div>
+                <div class="form-group">
+                    <label for="inspector_name">Consultor Avaliador</label>
+                    <input type="text" id="inspector_name" placeholder="Seu nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="visit_date">Data da Visita</label>
+                    <input type="date" id="visit_date" required>
+                </div>
+                <button class="btn-next" onclick="app.startAudit()">Começar Auditoria</button>
+            </section>
+
+            <!-- Audit Sections (Dynamic) -->
+            <div id="audit-form-container"></div>
+
+            <!-- Summary / Submit Section -->
+            <section id="step-final" class="card hidden">
+                <h2>Diagnóstico Final e Performance</h2>
+                <div id="critical-alerts" class="hidden"
+                    style="margin-bottom: 20px; padding: 15px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); border-left: 5px solid #ef4444;">
+                </div>
+                <div id="summary-content"></div>
+                <div class="form-group">
+                    <label for="final_diagnosis">Resumo Executivo Adicional</label>
+                    <textarea id="final_diagnosis" rows="4"
+                        placeholder="Sua percepção final como consultor..."></textarea>
+                </div>
+                <button class="btn-submit" onclick="app.submitAudit()">Finalizar e Salvar</button>
+            </section>
+
+            <!-- Printable Report -->
+            <section id="results-dashboard" class="card hidden">
+                <div id="printable-report"></div>
+            </section>
+        </main>
+
+        <nav class="mobile-nav">
+            <button onclick="location.reload()" id="nav-new">Nova Auditoria</button>
+        </nav>
+    </div>
+
+    <div id="toast" class="toast">Mensagem aqui</div>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => console.error('SW falhou:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

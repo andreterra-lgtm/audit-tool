@@ -1,0 +1,387 @@
+{
+  "sections": [
+    {
+      "id": "identificacao",
+      "name": "IDENTIFICAÇÃO E PRÉ-VISITA",
+      "questions": [
+        {
+          "id": "tipo_visita",
+          "text": "Tempo de Unidade",
+          "type": "multiple_choice",
+          "options": [
+            "Nova Loja",
+            "Menos de um ano",
+            "Opera a mais de um ano"
+          ]
+        },
+        {
+          "id": "status_previo",
+          "text": "Status Prévio: Desempenho atual e potencial de crescimento",
+          "type": "multiple_choice",
+          "options": [
+            "Alto",
+            "Médio",
+            "Baixo"
+          ]
+        }
+      ]
+    }
+  ],
+  "pillars": [
+    {
+      "id": "p1",
+      "name": "PILAR 1",
+      "weight": 50,
+      "blocks": [
+        {
+          "id": "b1",
+          "name": "BLOCO 1: EXPERIÊNCIA EXTERNA",
+          "weight": 24,
+          "questions": [
+            {
+              "id": "p1_b1_q1",
+              "text": "1- Referente a Fachada da Loja, avalie os principais pontos: (Logo; Tom da cor; Locação; Iluminação e Caracterização da Marca).",
+              "topics": [
+                "Pintura está em boas condições?",
+                "Fachada está bem iluminada?",
+                "Fachada está com lâmpadas queimadas?",
+                "Fachada está no campo visual dos clientes?",
+                "É fácil perceber que é uma sorveteria?",
+                "Tem windbanner?",
+                "Fachada se encontra nos padrões atuais da fábrica?",
+                "Trabalha com paisagismo / está bem cuidado?",
+                "Fachada no período no noturno fica bem iluminada e destacada?"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "name": "BLOCO 2: PRIMEIRA IMPRESSÃO INTERNA",
+          "weight": 29,
+          "questions": [
+            {
+              "id": "p1_b2_q1",
+              "text": "1- Referente a Disposição Interna da Loja, avalie os principais pontos: (Plotagem dos Freezers; Nomes dos Sorvetes; Cores da Marca Presentes; Condições das Mesas; Quadros com Picolés).",
+              "topics": [
+                "Pintura interna da sorveteria está bem cuidada e retocada? Ou suja e com marcas de uso?",
+                "Cor interna se encontra nos padrões atuais da marca como branco gelo e algodão egípcio predominantemente?",
+                "Tem na parede os nomes dos sabores?",
+                "Sorveteria está bem distribuída? Com organização interna fazendo o roteiro do cliente corretamente tendo começo meio e fim?",
+                "Mesas estão limpas e em bom estado?",
+                "A sorveteria é um local aconchegante?",
+                "A sorveteria trabalha os sentidos dos clientes colocando aromatizador para aguçar o paladar?",
+                "Iluminação da sorveteria é super branco ou contém luminária neutra?",
+                "A sorveteria trabalha com estratégias de iluminoteca para focar no que realmente ele quer vender para trazer destaque?",
+                "A sorveteria contém playground?",
+                "O playground é grande ou bem compacto?",
+                "Colaboradores se encontram uniformizados?",
+                "Plotagem dos freezers se encontra em bom estado?",
+                "Os móveis da loja se encontram em bom estado?"
+              ]
+            },
+            {
+              "id": "p1_b2_q2",
+              "text": "2- Sobre a Exposição de Sorvetes, verifique se os parâmetros estão sendo atendidos: (Reposição de Picolés e Sorvetes; Ordem alfabética dos Sabores; Altura das caixas de Sorvetes; Disposição das Guloseimas; Produtos devidamente identificados).",
+              "topics": [
+                "O lojista mantém a loja sempre bem abastecida de produtos?",
+                "Os picolés estão em ordem por linhas e subsequentes em ordem alfabética?",
+                "Colaboradores e donos de loja sabem sobre os produtos frutos de goiás?",
+                "Como o lojista faz a gestão do estoque? É eficiente? Funciona não deixando a loja com estoque baixo?",
+                "Caixas de sorvetes estão bem posicionadas nos freezers com alturas das caixas e ordem de consistência dos sabores?",
+                "Os freezers estão com gelo sobressalente?",
+                "Freezers estão limpos sem sorvetes derramados na parte interna/externa?",
+                "Buffet de guloseimas se encontra com variedade de caldas?",
+                "Todos os itens desse buffet têm identificação?",
+                "Essa loja tem inseto com moscas, formigas e baratas?",
+                "Essa loja trabalha com frutas no buffet?",
+                "Esse buffet está bem posicionado na loja?",
+                "Esse buffet está sempre limpo?",
+                "Quais dias da semana são destinados para reposição e rebaixamento de sorvetes?",
+                "Trabalha com todos os produtos que a distribuição disponibiliza para compra?"
+              ]
+            },
+            {
+              "id": "p1_b2_q3",
+              "text": "3- Referente a Variedade encontrada na Unidade, Verifique os Parâmetros: (Variedade das Caldas e Sabores; Frutas; Linha Zero; Linha Proteica; Qualidade da produção do Buffet)."
+            }
+          ]
+        },
+        {
+          "id": "b3",
+          "name": "BLOCO 3: LIMPEZA E HIGIENE",
+          "weight": 35,
+          "questions": [
+            {
+              "id": "p1_b3_q1",
+              "text": "1- Freezer: Verifique a limpeza de todos Freezers, inclusive de estoque (Sem Gelo Sobressalente; Temperatura correta; Sem sobrecarga de produtos; Limpeza externa e interna).",
+              "topics": [
+                "Os freezers estão limpos por dentro e fora, sem sorvetes derramados. E os vidros se encontram totalmente transparentes sem sujeira?",
+                "Lojista sabe regular a temperatura dos freezers corretamente?",
+                "Os freezers tem termostato para controle de temperatura?",
+                "Os sorvetes estão macios para pegar no freezer? Ou cliente tem dificuldade para fazer sua bola de sorvete?",
+                "Nos sorvetes encontram-se insetos ou cabelos?",
+                "As caixas se encontram muito baixas, mostrando o fundo do freezer?",
+                "No caso de os freezers serem antigos, o lojista trabalha com sistema de desligar os equipamentos?"
+              ]
+            },
+            {
+              "id": "p1_b3_q2",
+              "text": "2- Utensilhos: (Louças; Boleadores; Potes e talheres de servir, Equipamentos cozinha)."
+            },
+            {
+              "id": "p1_b3_q3",
+              "text": "3- Banheiro, Avalie as condições dos banheiros disponíveis da unidade. (Organização; Limpeza; Odor; Aromatização; Papel)."
+            }
+          ]
+        },
+        {
+          "id": "b4",
+          "name": "BLOCO 4: ATENDIMENTO, EQUIPE E PROCESSOS",
+          "weight": 12,
+          "questions": [
+            {
+              "id": "p1_b4_q1",
+              "text": "1- O cliente é prontamente notado e bem recepcionado ao entrar na loja?"
+            },
+            {
+              "id": "p1_b4_q2",
+              "text": "2- A equipe tem uma postura profissional, comunica-se com clareza e demonstra segurança na venda?"
+            },
+            {
+              "id": "p1_b4_q3",
+              "text": "3- Há oferta ativa de produtos adicionais e combos para aumentar o ticket médio da loja?"
+            }
+          ]
+        }
+      ],
+      "description": "Para avaliar nesta primeira seção, Verifique os parâmetros indicados na pergunta sobre o tema, para atingir a pontuação máxima na questão, o lojista deve atingir ou possuir com excelência, todos os “tópicos” destacados."
+    }
+  ],
+  "pillars_section2": [
+    {
+      "id": "SEC2",
+      "name": "SEGUNDA SEÇÃO - GESTÃO",
+      "weight": 100,
+      "blocks": [
+        {
+          "id": "SEC2_B1",
+          "name": "Bloco 1 – \"LIDERANÇA\"",
+          "weight": 12.5,
+          "questions": [
+            {
+              "id": "SEC2_B1_Q1",
+              "text": "1 - Como você avalia o tratamento do lojista (Dono da Unidade), para com sua equipe?"
+            },
+            {
+              "id": "SEC2_B1_Q2",
+              "text": "2 - O Desempenho da Loja é analisado pelos Dirigentes?"
+            },
+            {
+              "id": "SEC2_B1_Q3",
+              "text": "3 - Os Dirigentes compartilham informações com os colaboradores? (Reuniões de alinhamento, presente na equipe)."
+            },
+            {
+              "id": "SEC2_B1_Q4",
+              "text": "4 - O Lojista investe em seu próprio desenvolvimento gerencial? Está por dentro de Pautas e Questões abordadas na Universidade Corporativa?"
+            },
+            {
+              "id": "SEC2_B1_Q5",
+              "text": "5 - A unidade apresenta boa capacidade de Adaptação para aumento do Ticket Médio? (Sazonalidade, variedade no cardápio, Prêmios)"
+            },
+            {
+              "id": "SEC2_B1_Q6",
+              "text": "6 - Lojista tem processos bem definidos e executados na loja, como checklist de operação?"
+            },
+            {
+              "id": "SEC2_B1_Q7",
+              "text": "7 - Ele tem regimento interno? Para estabelecer as regras e as funções de cada colaborador na empresa?"
+            }
+          ]
+        },
+        {
+          "id": "SEC2_B2",
+          "name": "Bloco 2 – \"ESTRATÉGIAS E PLANOS\"",
+          "weight": 12.5,
+          "questions": [
+            {
+              "id": "SEC2_B2_Q1",
+              "text": "1 - As estratégias de Marketing, permitem alcançar os objetivos da Loja? Estão bem definidas?"
+            },
+            {
+              "id": "SEC2_B2_Q2",
+              "text": "2 - Existem indicadores e metas bem estabelecidos para o negócio? Existem planos de ação bem definidos para tomada de Decisão?"
+            },
+            {
+              "id": "SEC2_B2_Q3",
+              "text": "3 - Realiza tráfego pago?"
+            },
+            {
+              "id": "SEC2_B2_Q4",
+              "text": "4 - Tem planejamento estratégico de postagens?"
+            },
+            {
+              "id": "SEC2_B2_Q5",
+              "text": "5 - Tem uma rotina constante de postagens?"
+            },
+            {
+              "id": "SEC2_B2_Q6",
+              "text": "6 - Posta todos os dias stories?"
+            },
+            {
+              "id": "SEC2_B2_Q7",
+              "text": "7 - Página tem bom engajamento?"
+            },
+            {
+              "id": "SEC2_B2_Q8",
+              "text": "8 - Faz material que realmente gera desejo, para consumo nos clientes?"
+            }
+          ]
+        },
+        {
+          "id": "SEC2_B3",
+          "name": "Bloco 3 – \"CLIENTES\"",
+          "weight": 12.5,
+          "questions": [
+            {
+              "id": "SEC2_B3_Q1",
+              "text": "1 - Os grupos de clientes são identificados, com suas diferentes necessidades e expectativas? (Serviços de Delivery e entrega)."
+            },
+            {
+              "id": "SEC2_B3_Q2",
+              "text": "2 - Existem fotos/vídeos de produtos Frutos de Goiás tiradas na Loja? Com objetivo de criar conexão com clientes."
+            },
+            {
+              "id": "SEC2_B3_Q3",
+              "text": "3 - As reclamações dos clientes, são devidamente registradas e tratadas?"
+            },
+            {
+              "id": "SEC2_B3_Q4",
+              "text": "4 - A satisfação dos clientes, é frequentemente avaliada? (NPS, QR Code de Avaliação, FeedBacks em Geral)."
+            },
+            {
+              "id": "SEC2_B3_Q5",
+              "text": "5 - A loja possui estratégias definidas, referentes a fidelidade e a manutenção de Clientes ativos?"
+            },
+            {
+              "id": "SEC2_B3_Q6",
+              "text": "6 - Loja está presente no google \"Meu Negócio\", e alimentado com as informações corretas da loja?"
+            }
+          ]
+        },
+        {
+          "id": "SEC2_B4",
+          "name": "Bloco 4 – \"SOCIEDADE\"",
+          "weight": 12.5,
+          "questions": [
+            {
+              "id": "SEC2_B4_Q1",
+              "text": "1 - As exigências legais necessárias para o funcionamento da empresa são conhecidas e estão bem documentadas? (Alvará de funcionamento, Horário bem definido, Aluguel, Contas à pagar sem atraso)."
+            },
+            {
+              "id": "SEC2_B4_Q2",
+              "text": "2 - A unidade adota boas práticas de fabricação? Usa Equipamentos de proteção para as atividades necessárias?"
+            },
+            {
+              "id": "SEC2_B4_Q3",
+              "text": "3 - A Unidade demonstra comprometimento com a comunidade local por meio de envolvimento de ações sociais ou eventos?"
+            }
+          ]
+        },
+        {
+          "id": "SEC2_B5",
+          "name": "Bloco 5 – \"INFORMAÇÕES E CONHECIMENTO\"",
+          "weight": 12.5,
+          "questions": [
+            {
+              "id": "SEC2_B5_Q1",
+              "text": "1 - São promovidas melhorias na prática de Gestão? (Controle de Estoque, Organização de Compras, Equipe bem dividida)."
+            },
+            {
+              "id": "SEC2_B5_Q2",
+              "text": "2 - São Obtidas e utilizadas informações comparativas na análise de desempenho? (Produtos que mais vendem, por exemplo)."
+            },
+            {
+              "id": "SEC2_B5_Q3",
+              "text": "3 - Como é feito o controle de estoque? Trabalha com mínimo máximo?"
+            },
+            {
+              "id": "SEC2_B5_Q4",
+              "text": "4 - Trabalha com estoque sobrando para sustentar eventuais problemas que podem acontecer, que causariam atraso para entregas?"
+            },
+            {
+              "id": "SEC2_B5_Q5",
+              "text": "5 - Lojista sabe quais produtos tem mais sucesso em sua unidade?"
+            },
+            {
+              "id": "SEC2_B5_Q6",
+              "text": "6 - Lojista tem as funções bem definidas com escala bem clara de atendimento pelos colaboradores?"
+            },
+            {
+              "id": "SEC2_B5_Q7",
+              "text": "7 - Equipe está bem engajada?"
+            },
+            {
+              "id": "SEC2_B5_Q8",
+              "text": "8 - Tem planos de carreira para os colaboradores?"
+            },
+            {
+              "id": "SEC2_B5_Q9",
+              "text": "9 - Tem plano de bonificação para os colaboradores por produtividade?"
+            }
+          ]
+        },
+        {
+          "id": "SEC2_B6",
+          "name": "Bloco 6 – \"PESSOAS\"",
+          "weight": 12.5,
+          "questions": [
+            {
+              "id": "SEC2_B6_Q1",
+              "text": "1 - As funções e responsabilidades das pessoas (dirigentes e colaboradores) estão bem definidas e documentadas?"
+            },
+            {
+              "id": "SEC2_B6_Q2",
+              "text": "2 - Sobre a Seleção de novos colabores, é feita seguindo os padrões estabelecidos? (Divulgação da vaga, Salário compatível, Escopo Definido)."
+            },
+            {
+              "id": "SEC2_B6_Q3",
+              "text": "3 - O bem estar e satisfação dos colaboradores são promovidos?"
+            }
+          ]
+        },
+        {
+          "id": "SEC2_B7",
+          "name": "Bloco 7 – \"PROCESSOS\"",
+          "weight": 12.5,
+          "questions": [
+            {
+              "id": "SEC2_B7_Q1",
+              "text": "1 - Os processos principais do negócio são executados de forma padronizada, com padrões documentados?"
+            },
+            {
+              "id": "SEC2_B7_Q2",
+              "text": "2 - Como você avalia de forma geral o funcionamento da unidade? (Atendimento, Limpeza, Organização, Estoque e Criatividade)."
+            }
+          ]
+        },
+        {
+          "id": "SEC2_B8",
+          "name": "Bloco 8 – \"RESULTADOS\"",
+          "weight": 12.5,
+          "questions": [
+            {
+              "id": "SEC2_B8_Q1",
+              "text": "1 - As finanças da empresa são controladas a fim de otimizar a utilização dos recursos?"
+            },
+            {
+              "id": "SEC2_B8_Q2",
+              "text": "2 - Existem resultados relativos à margem de lucro?"
+            }
+          ]
+        }
+      ],
+      "description": "Nesta Segunda Etapa, para atingir a pontuação máxima na questão, o Lojista deve além de executar o processo corretamente, Ter devidamente documentado de forma prática cada um dos fatores apontados."
+    }
+  ]
+}
