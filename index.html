@@ -3,10 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#00ff88">
+    <meta name="description" content="Ferramenta de auditoria Trilhas de Alta Performance – Frutos de Goiás">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Trilhas FG">
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
     <title>Trilhas de Alta Performance</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,7 +32,19 @@
         </header>
 
         <main id="main-content">
-            <!-- Information Section -->
+            <!-- Resume Banner -->
+            <div id="resume-banner" class="hidden resume-banner">
+                <div class="resume-info">
+                    <span>📋 Auditoria em andamento:</span>
+                    <strong id="resume-info"></strong>
+                </div>
+                <div class="resume-actions">
+                    <button class="btn-resume" onclick="app.resumeAudit()">Retomar</button>
+                    <button class="btn-discard" onclick="app.clearProgress()">Descartar</button>
+                </div>
+            </div>
+
+            <!-- Identification -->
             <section id="step-0" class="card active">
                 <h2>Identificação da Visita</h2>
                 <div class="form-group">
@@ -54,16 +70,12 @@
                 <button class="btn-next" onclick="app.startAudit()">Começar Auditoria</button>
             </section>
 
-            <!-- Audit Sections (Dynamic) -->
+            <!-- Audit Form (Dynamic) -->
             <div id="audit-form-container"></div>
 
-            <!-- Summary / Submit Section -->
+            <!-- Summary / Finalize -->
             <section id="step-final" class="card hidden">
                 <h2>Diagnóstico Final e Performance</h2>
-                <div id="critical-alerts" class="hidden"
-                    style="margin-bottom: 20px; padding: 15px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); border-left: 5px solid #ef4444;">
-                </div>
-                <div id="summary-content"></div>
                 <div class="form-group">
                     <label for="final_diagnosis">Resumo Executivo Adicional</label>
                     <textarea id="final_diagnosis" rows="4"
@@ -72,7 +84,7 @@
                 <button class="btn-submit" onclick="app.submitAudit()">Finalizar e Salvar</button>
             </section>
 
-            <!-- Printable Report -->
+            <!-- Report -->
             <section id="results-dashboard" class="card hidden">
                 <div id="printable-report"></div>
             </section>
@@ -83,13 +95,13 @@
         </nav>
     </div>
 
-    <div id="toast" class="toast">Mensagem aqui</div>
+    <div id="toast" class="toast"></div>
 
     <script src="app.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(err => console.error('SW falhou:', err));
+                navigator.serviceWorker.register('sw.js').catch(() => {});
             });
         }
     </script>
