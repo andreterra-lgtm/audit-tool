@@ -1,4 +1,4 @@
-const CACHE = 'fg-trilhas-v4';
+const CACHE = 'fg-trilhas-v6';
 const PRECACHE = [
     './',
     './index.html',

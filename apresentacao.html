@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trilhas de Alta Performance — Apresentação Técnica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+/* ── Reset & Base ────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --green:   #00cc6e;
+    --cyan:    #00a8e8;
+    --gold:    #e8a800;
+    --dark:    #0b1626;
+    --mid:     #1a2a44;
+    --light:   #f0f6ff;
+    --text:    #0f172a;
+    --soft:    #475569;
+    --muted:   #94a3b8;
+    --border:  #e2e8f0;
+    --grad:    linear-gradient(135deg, #00cc6e 0%, #00a8e8 100%);
+}
+
+body {
+    font-family: 'Outfit', Arial, sans-serif;
+    background: #f5f7fb;
+    color: var(--text);
+    font-size: 11pt;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Page Containers ─────────────────────────────────────────── */
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto 32px;
+    background: #fff;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.12);
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+}
+.page:last-child { page-break-after: avoid; }
+
+/* ── Cover Page ─────────────────────────────────────────────── */
+.cover {
+    background: var(--dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 50px;
+    position: relative;
+}
+.cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 70% 50% at 10% 20%,  rgba(0,168,232,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 85%,  rgba(0,204,110,0.14) 0%, transparent 55%);
+    pointer-events: none;
+}
+.cover-logo {
+    max-width: 160px;
+    margin-bottom: 36px;
+    filter: brightness(1.1) drop-shadow(0 0 24px rgba(0,204,110,0.4));
+    position: relative;
+    z-index: 1;
+}
+.cover-eyebrow {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 3.5px;
+    color: var(--green);
+    font-weight: 700;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+}
+.cover-title {
+    font-size: 28pt;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+}
+.cover-title span {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.cover-subtitle {
+    font-size: 12pt;
+    color: rgba(255,255,255,0.58);
+    margin-bottom: 48px;
+    font-weight: 400;
+    position: relative;
+    z-index: 1;
+}
+.cover-divider {
+    width: 80px;
+    height: 3px;
+    background: var(--grad);
+    border-radius: 3px;
+    margin: 0 auto 48px;
+    position: relative;
+    z-index: 1;
+}
+.cover-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+}
+.cover-tag {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.75);
+    padding: 6px 16px;
+    border-radius: 40px;
+    font-size: 8.5pt;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+.cover-footer {
+    position: absolute;
+    bottom: 32px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 8pt;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.5px;
+    z-index: 1;
+}
+
+/* ── Inner Pages ─────────────────────────────────────────────── */
+.page-inner { padding: 52px 54px; }
+
+/* ── Page Header ─────────────────────────────────────────────── */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    margin-bottom: 36px;
+    border-bottom: 2px solid var(--border);
+}
+.page-header-brand {
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    font-weight: 700;
+}
+.page-header-num {
+    font-size: 8pt;
+    color: var(--muted);
+    font-weight: 600;
+}
+.page-logo-small {
+    height: 28px;
+}
+
+/* ── Section Title ───────────────────────────────────────────── */
+.section-eyebrow {
+    font-size: 7.5pt;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: var(--green);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.section-heading {
+    font-size: 18pt;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 6px;
+}
+.section-heading span { color: var(--cyan); }
+.section-lead {
+    font-size: 10.5pt;
+    color: var(--soft);
+    line-height: 1.65;
+    margin-bottom: 32px;
+    max-width: 520px;
+}
+
+/* ── Overview Cards ──────────────────────────────────────────── */
+.overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+.overview-card {
+    background: var(--light);
+    border-radius: 10px;
+    padding: 18px 20px;
+    border-left: 4px solid var(--green);
+}
+.overview-card.blue  { border-left-color: var(--cyan); }
+.overview-card.gold  { border-left-color: var(--gold); }
+.overview-card.dark  { border-left-color: var(--dark); }
+.overview-card .oc-label {
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.overview-card .oc-value {
+    font-size: 14pt;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+}
+.overview-card .oc-sub {
+    font-size: 8.5pt;
+    color: var(--soft);
+    margin-top: 3px;
+}
+
+/* ── Tech Stack Table ────────────────────────────────────────── */
+.stack-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 28px;
+    font-size: 9.5pt;
+}
+.stack-table thead tr th {
+    background: var(--dark);
+    color: #fff;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.stack-table thead tr th:first-child { border-radius: 8px 0 0 8px; }
+.stack-table thead tr th:last-child  { border-radius: 0 8px 8px 0; }
+.stack-table tbody tr td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+}
+.stack-table tbody tr:last-child td { border-bottom: none; }
+.stack-table tbody tr:nth-child(even) td { background: #f8fafc; }
+.stack-table td .tech-name {
+    font-weight: 700;
+    color: var(--text);
+}
+.stack-table td .tech-version {
+    font-size: 7.5pt;
+    color: var(--muted);
+    font-weight: 600;
+    background: var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+}
+.stack-table td .tech-desc {
+    color: var(--soft);
+    font-size: 9pt;
+    margin-top: 2px;
+}
+.layer-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 7.5pt;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.layer-ui    { background: rgba(0,168,232,0.1);  color: #0077b6; }
+.layer-pwa   { background: rgba(0,204,110,0.1);  color: #008055; }
+.layer-data  { background: rgba(232,168,0,0.12); color: #a07000; }
+.layer-export{ background: rgba(239,68,68,0.1);  color: #b91c1c; }
+.layer-ux    { background: rgba(139,92,246,0.1); color: #6d28d9; }
+.layer-audio { background: rgba(236,72,153,0.1); color: #be185d; }
+
+/* ── Architecture Diagram ────────────────────────────────────── */
+.arch-diagram {
+    background: var(--light);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 28px;
+    text-align: center;
+}
+.arch-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.arch-layer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.arch-layer-label {
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    width: 80px;
+    text-align: right;
+    flex-shrink: 0;
+}
+.arch-layer-bar {
+    flex: 1;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 9pt;
+    font-weight: 600;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.arch-chip {
+    background: rgba(255,255,255,0.2);
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 7.5pt;
+    font-weight: 700;
+}
+.bar-ui     { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+.bar-logic  { background: linear-gradient(135deg, #047857, #00cc6e); }
+.bar-pwa    { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+.bar-data   { background: linear-gradient(135deg, #b45309, #f59e0b); }
+.arch-arrow {
+    text-align: center;
+    font-size: 10pt;
+    color: var(--muted);
+    line-height: 1;
+    margin-left: 92px;
+}
+
+/* ── Differential Cards ──────────────────────────────────────── */
+.diff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+.diff-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+}
+.diff-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--grad);
+}
+.diff-num {
+    font-size: 22pt;
+    font-weight: 800;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 6px;
+    font-variant-numeric: tabular-nums;
+}
+.diff-title {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 5px;
+}
+.diff-desc {
+    font-size: 8.5pt;
+    color: var(--soft);
+    line-height: 1.5;
+}
+
+/* ── Score Architecture ──────────────────────────────────────── */
+.score-flow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+    padding: 20px;
+    background: var(--light);
+    border-radius: 10px;
+}
+.score-box {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    text-align: center;
+    min-width: 90px;
+}
+.score-box .sb-label { font-size: 7pt; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 700; }
+.score-box .sb-formula { font-size: 9pt; font-weight: 700; color: var(--text); }
+.score-box .sb-range { font-size: 7pt; color: var(--muted); margin-top: 2px; }
+.score-arrow { font-size: 14pt; color: var(--muted); font-weight: 300; }
+.score-box.final { border-color: var(--cyan); background: #f0f9ff; }
+.score-box.final .sb-formula { color: var(--cyan); font-size: 11pt; }
+
+/* ── Comparison Table ────────────────────────────────────────── */
+.compare-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 24px;
+    font-size: 9pt;
+}
+.compare-table th {
+    padding: 9px 14px;
+    text-align: left;
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.compare-table th:first-child { color: var(--muted); }
+.compare-table th:nth-child(2) {
+    background: var(--dark);
+    color: #fff;
+    border-radius: 8px 8px 0 0;
+}
+.compare-table th:nth-child(3) { color: var(--muted); }
+.compare-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    color: var(--soft);
+}
+.compare-table td:nth-child(2) {
+    background: rgba(0,204,110,0.04);
+    border-bottom-color: rgba(0,204,110,0.15);
+    font-weight: 600;
+    color: var(--text);
+}
+.check  { color: #16a34a; font-weight: 700; font-size: 11pt; }
+.cross  { color: #dc2626; font-weight: 700; font-size: 11pt; }
+.partial{ color: #d97706; font-weight: 700; font-size: 11pt; }
+
+/* ── Info Boxes ──────────────────────────────────────────────── */
+.info-box {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    border-left: 4px solid;
+    font-size: 9.5pt;
+    line-height: 1.6;
+}
+.info-box.green { background: rgba(0,204,110,0.06); border-color: var(--green); }
+.info-box.blue  { background: rgba(0,168,232,0.06); border-color: var(--cyan);  }
+.info-box.gold  { background: rgba(232,168,0,0.08); border-color: var(--gold);  }
+.info-box strong { color: var(--text); }
+.info-box code {
+    background: rgba(0,0,0,0.07);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 8.5pt;
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+}
+
+/* ── Summary Grid ────────────────────────────────────────────── */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+}
+.summary-card {
+    text-align: center;
+    padding: 18px 12px;
+    background: var(--light);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+.summary-card .sc-num {
+    font-size: 22pt;
+    font-weight: 800;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+}
+.summary-card .sc-label {
+    font-size: 8pt;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+/* ── Footer Page ─────────────────────────────────────────────── */
+.closing {
+    background: var(--dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 60px;
+    position: relative;
+}
+.closing::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 60% 40% at 50% 30%, rgba(0,204,110,0.12) 0%, transparent 60%);
+    pointer-events: none;
+}
+.closing-logo { max-width: 120px; margin-bottom: 32px; filter: brightness(1.1); position: relative; z-index:1; }
+.closing h2 { font-size: 20pt; font-weight: 800; color: #fff; margin-bottom: 12px; position: relative; z-index:1; }
+.closing p { font-size: 11pt; color: rgba(255,255,255,0.5); max-width: 380px; margin: 0 auto 40px; line-height: 1.65; position: relative; z-index:1; }
+.closing-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 40px;
+    padding: 10px 24px;
+    font-size: 9pt;
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+    position: relative;
+    z-index:1;
+}
+
+/* ── Print ────────────────────────────────────────────────────── */
+@page {
+    size: A4;
+    margin: 0;
+}
+@media print {
+    html, body { 
+        margin: 0 !important; 
+        padding: 0 !important; 
+        width: 210mm !important;
+        height: 297mm !important;
+        background: #fff; 
+    }
+    .page { 
+        box-shadow: none !important; 
+        margin: 0 !important; 
+        width: 210mm !important; 
+        height: 297mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        page-break-after: always !important;
+        page-break-inside: avoid !important;
+    }
+    .no-print { display: none !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+}
+
+/* ── Print Button (screen only) ──────────────────────────────── */
+.print-btn-wrap {
+    text-align: center;
+    padding: 32px;
+}
+.print-btn {
+    background: linear-gradient(135deg, #00cc6e, #00a8e8);
+    color: #0b1626;
+    border: none;
+    border-radius: 40px;
+    padding: 14px 40px;
+    font-size: 11pt;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    box-shadow: 0 4px 24px rgba(0,204,110,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.print-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,204,110,0.45); }
+@media print { .print-btn-wrap { display: none; } }
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ PRINT BUTTON ═══════════════════════ -->
+<div class="print-btn-wrap no-print">
+    <button class="print-btn" onclick="window.print()">
+        ⬇ Salvar como PDF (Ctrl+P → Salvar como PDF)
+    </button>
+</div>
+
+<!-- ═══════════════════════════════ CAPA ═══════════════════════════════ -->
+<div class="page cover">
+    <img src="logo.png" alt="Frutos de Goiás" class="cover-logo">
+    <div class="cover-eyebrow">Documentação Técnica — WebApp</div>
+    <h1 class="cover-title">
+        Trilhas de<br><span>Alta Performance</span>
+    </h1>
+    <p class="cover-subtitle">Ferramenta de Auditoria para Franquias Frutos de Goiás</p>
+    <div class="cover-divider"></div>
+    <div class="cover-tags">
+        <span class="cover-tag">PWA Offline-First</span>
+        <span class="cover-tag">Vanilla JavaScript</span>
+        <span class="cover-tag">Zero Backend</span>
+        <span class="cover-tag">iOS &amp; Android</span>
+        <span class="cover-tag">Glassmorphism UI</span>
+        <span class="cover-tag">PDF Export Embarcado</span>
+    </div>
+    <div class="cover-footer">Frutos de Goiás · Sistema Trilhas de Alta Performance · 2026</div>
+</div>
+
+<!-- ═══════════════════════════════ PÁG 2 — VISÃO GERAL ════════════════ -->
+<div class="page">
+<div class="page-inner">
+
+    <div class="page-header">
+        <span class="page-header-brand">Trilhas de Alta Performance</span>
+        <img src="logo.png" alt="FG" class="page-logo-small">
+        <span class="page-header-num">Visão Geral · pág. 2</span>
+    </div>
+
+    <div class="section-eyebrow">O Produto</div>
+    <h2 class="section-heading">O que é o <span>Trilhas</span>?</h2>
+    <p class="section-lead">
+        Sistema de auditoria digital desenvolvido sob medida para consultores e franqueados da rede
+        Frutos de Goiás. Substitui planilhas e formulários em papel por uma experiência moderna,
+        offline e instalável diretamente no celular.
+    </p>
+
+    <div class="overview-grid">
+        <div class="overview-card">
+            <div class="oc-label">Tipo de Aplicação</div>
+            <div class="oc-value">PWA</div>
+            <div class="oc-sub">Progressive Web App — instalável no iOS e Android sem loja</div>
+        </div>
+        <div class="overview-card blue">
+            <div class="oc-label">Infraestrutura de Servidor</div>
+            <div class="oc-value">Zero</div>
+            <div class="oc-sub">100% client-side · sem banco de dados · sem mensalidade de servidor</div>
+        </div>
+        <div class="overview-card gold">
+            <div class="oc-label">Seções de Auditoria</div>
+            <div class="oc-value">2 Seções</div>
+            <div class="oc-sub">Seção 1: Inspeção da Unidade · Seção 2: Gestão</div>
+        </div>
+        <div class="overview-card dark">
+            <div class="oc-label">Blocos Avaliados</div>
+            <div class="oc-value">12 Blocos</div>
+            <div class="oc-sub">4 na S1 (pesos distintos) + 8 na S2 (12,5% cada)</div>
+        </div>
+    </div>
+
+    <div class="info-box green">
+        <strong>Fluxo principal:</strong> O consultor preenche a identificação da visita →
+        responde perguntas por bloco (estrelas, conforme/não-conforme, texto) →
+        acompanha a nota em tempo real → finaliza com diagnóstico executivo →
+        assiste à animação de carregamento → recebe o relatório completo com opção de
+        <strong>exportar PDF</strong> diretamente no celular.
+    </div>
+
+    <div class="info-box blue">
+        <strong>Persistência automática:</strong> A auditoria é salva no <code>localStorage</code>
+        a cada resposta. Se o app fechar ou o celular travar, o auditor pode retomar de onde parou,
+        sem perder nenhum dado.
+    </div>
+
+    <div class="info-box gold">
+        <strong>Trabalho offline:</strong> Após o primeiro acesso, o Service Worker armazena todos
+        os arquivos. O app funciona completamente sem internet — mesmo em áreas sem sinal.
+    </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════ PÁG 3 — STACK COMPLETA ════════════ -->
+<div class="page">
+<div class="page-inner">
+
+    <div class="page-header">
+        <span class="page-header-brand">Trilhas de Alta Performance</span>
+        <img src="logo.png" alt="FG" class="page-logo-small">
+        <span class="page-header-num">Stack de Tecnologias · pág. 3</span>
+    </div>
+
+    <div class="section-eyebrow">Stack Completa — Camada por Camada</div>
+    <h2 class="section-heading">Tecnologias <span>Utilizadas</span></h2>
+    <p class="section-lead">Ordenadas da camada mais baixa (infraestrutura) até a mais alta (experiência do usuário).</p>
+
+    <table class="stack-table">
+        <thead>
+            <tr>
+                <th style="width:28%">Tecnologia</th>
+                <th style="width:18%">Camada</th>
+                <th>Função no Projeto</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="tech-name">Service Worker<span class="tech-version">SW API</span></div>
+                    <div class="tech-desc">sw.js · Cache v6</div>
+                </td>
+                <td><span class="layer-badge layer-pwa">PWA / Offline</span></td>
+                <td>Intercepta todas as requisições de rede. Estratégia <em>network-first</em> para JS/CSS/JSON (garante atualizações imediatas) e <em>cache-first</em> para imagens e HTML. Permite uso 100% offline após primeiro acesso.</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="tech-name">Web App Manifest<span class="tech-version">JSON</span></div>
+                    <div class="tech-desc">manifest.json</div>
+                </td>
+                <td><span class="layer-badge layer-pwa">PWA / Offline</span></td>
+                <td>Define nome, ícones, cor de tema, orientação <em>portrait</em>, escopo e URL de início. Habilita instalação no iOS (Add to Home Screen) e Android sem precisar de loja de aplicativos.</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="tech-name">Cache API<span class="tech-version">Browser</span></div>
+                    <div class="tech-desc">caches.open / put / match</div>
+                </td>
+                <td><span class="layer-badge layer-pwa">PWA / Offline</span></td>
+                <td>Armazena os 8 assets do app (HTML, JS, CSS, JSON, imagens) no cache do browser. Versão do cache bumpeada a cada release para invalidação automática de assets antigos.</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="tech-name">localStorage<span class="tech-version">Web Storage</span></div>
+                    <div class="tech-desc">localStorage.setItem/getItem</div>
+                </td>
+                <td><span class="layer-badge layer-data">Dados</span></td>
+                <td>Persiste respostas, diagnósticos de bloco, metadados da visita e timestamp a cada interação do auditor. Permite retomar auditorias interrompidas mesmo após fechar o app.</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="tech-name">fetch API<span class="tech-version">ES2015+</span></div>
+                    <div class="tech-desc">questions.json · logo.png</div>
+                </td>
+                <td><span class="layer-badge layer-data">Dados</span></td>
+                <td>Carrega o banco de perguntas (<em>questions.json</em>) e pré-busca a logo como base64 na inicialização. A pré-busca da logo é o que torna o export de PDF no iOS totalmente síncrono.</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="tech-name">FileReader API<span class="tech-version">Browser</span></div>
+                    <div class="tech-desc">readAsDataURL</div>
+                </td>
+                <td><span class="layer-badge layer-export">Export PDF</span></td>
+                <td>Converte o arquivo logo.png em base64 durante o <em>init()</em>. Elimina a necessidade de fetch assíncrono no momento do export, quebrando a cadeia de gestos do usuário que causava o bloqueio de popup no iOS Safari.</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="tech-name">Blob API + URL<span class="tech-version">Browser</span></div>
+                    <div class="tech-desc">new Blob · createObjectURL</div>
+                </td>
+                <td><span class="layer-badge layer-export">Export PDF</span></td>
+                <td>Encapsula o HTML completo do relatório (com CSS inline e logo em base64) em um Blob de memória e gera uma URL temporária. Permite abrir o PDF sem servidor — funciona offline.</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="tech-name">Web Audio API<span class="tech-version">Browser</span></div>
+                    <div class="tech-desc">AudioContext · OscillatorNode</div>
+                </td>
+                <td><span class="layer-badge layer-audio">UX / Som</span></td>
+                <td>Gera a melodia da tela de carregamento usando osciladores digitais (triângulo + sine). Escala pentatônica ascendente + acorde final. Zero arquivo de áudio — o som é sintetizado em tempo real no browser.</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="tech-name">HTML5 Semântico<span class="tech-version">HTML5</span></div>
+                    <div class="tech-desc">index.html</div>
+                </td>
+                <td><span class="layer-badge layer-ui">UI / Frontend</span></td>
+                <td>Estrutura com <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;section&gt;</code>. Tags PWA da Apple (<em>apple-mobile-web-app-capable</em>), meta <em>theme-color</em>, <em>viewport</em> e <em>description</em>.</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="tech-name">CSS3 Avançado<span class="tech-version">CSS3</span></div>
+                    <div class="tech-desc">style.css · 27KB</div>
+                </td>
+                <td><span class="layer-badge layer-ui">UI / Frontend</span></td>
+                <td>Custom Properties, <em>backdrop-filter: blur()</em> (glassmorphism), <em>-webkit-backdrop-filter</em> (iOS), <code>env(safe-area-inset-bottom)</code> (barra home do iPhone), <em>@keyframes</em> para 8 animações, <em>prefers-reduced-motion</em>, CSS Grid e Flexbox.</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="tech-name">Vanilla JavaScript<span class="tech-version">ES2020</span></div>
+                    <div class="tech-desc">app.js · ~680 linhas</div>
+                </td>
+                <td><span class="layer-badge layer-ui">UI / Frontend</span></td>
+                <td>Lógica completa do app sem frameworks. Renderização dinâmica de formulários, algoritmo de pontuação ponderada, gerenciamento de estado, mapa de perguntas O(1), controle de progresso em tempo real e geração de relatório HTML.</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="tech-name">Outfit (Google Fonts)<span class="tech-version">Variable</span></div>
+                    <div class="tech-desc">wght 300–800</div>
+                </td>
+                <td><span class="layer-badge layer-ux">Design</span></td>
+                <td>Tipografia sans-serif moderna com suporte a peso variável (300 ao 800). Carregada via <em>preconnect</em> para máxima performance. Aplicada em todo o app e no relatório PDF impresso.</td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════ PÁG 4 — ARQUITETURA ══════════════ -->
+<div class="page">
+<div class="page-inner">
+
+    <div class="page-header">
+        <span class="page-header-brand">Trilhas de Alta Performance</span>
+        <img src="logo.png" alt="FG" class="page-logo-small">
+        <span class="page-header-num">Arquitetura · pág. 4</span>
+    </div>
+
+    <div class="section-eyebrow">Arquitetura do Sistema</div>
+    <h2 class="section-heading">Como as Camadas <span>se Conectam</span></h2>
+    <p class="section-lead">
+        O app é organizado em 4 camadas independentes que se comunicam de forma síncrona,
+        sem chamadas a APIs externas em tempo de execução.
+    </p>
+
+    <div class="arch-diagram">
+        <div class="arch-layers">
+            <div class="arch-layer">
+                <span class="arch-layer-label">Usuário</span>
+                <div class="arch-layer-bar bar-ui">
+                    <span>Interface HTML + CSS</span>
+                    <span class="arch-chip">Glassmorphism OLED</span>
+                    <span class="arch-chip">Animações CSS</span>
+                    <span class="arch-chip">Web Audio</span>
+                    <span class="arch-chip">Responsive Mobile</span>
+                </div>
+            </div>
+            <div class="arch-arrow">↕</div>
+            <div class="arch-layer">
+                <span class="arch-layer-label">Lógica</span>
+                <div class="arch-layer-bar bar-logic">
+                    <span>Vanilla JavaScript (app.js)</span>
+                    <span class="arch-chip">Score Ponderado</span>
+                    <span class="arch-chip">DOM Dinâmico</span>
+                    <span class="arch-chip">PDF Builder</span>
+                    <span class="arch-chip">Progress Map O(1)</span>
+                </div>
+            </div>
+            <div class="arch-arrow">↕</div>
+            <div class="arch-layer">
+                <span class="arch-layer-label">PWA</span>
+                <div class="arch-layer-bar bar-pwa">
+                    <span>Service Worker + Cache API</span>
+                    <span class="arch-chip">Network-First JS/CSS</span>
+                    <span class="arch-chip">Cache-First Assets</span>
+                    <span class="arch-chip">Offline 100%</span>
+                </div>
+            </div>
+            <div class="arch-arrow">↕</div>
+            <div class="arch-layer">
+                <span class="arch-layer-label">Dados</span>
+                <div class="arch-layer-bar bar-data">
+                    <span>localStorage + questions.json</span>
+                    <span class="arch-chip">Auto-save</span>
+                    <span class="arch-chip">Resume</span>
+                    <span class="arch-chip">Blob PDF</span>
+                    <span class="arch-chip">Base64 Logo</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-eyebrow" style="margin-top:10px">Algoritmo de Pontuação</div>
+    <h3 style="font-size:12pt;font-weight:700;margin-bottom:16px;color:var(--text)">Cálculo de Nota — Fluxo Ponderado</h3>
+
+    <div class="score-flow">
+        <div class="score-box">
+            <div class="sb-label">Questão</div>
+            <div class="sb-formula">0 – 5.0</div>
+            <div class="sb-range">estrelas ou tópicos</div>
+        </div>
+        <div class="score-arrow">→</div>
+        <div class="score-box">
+            <div class="sb-label">Bloco</div>
+            <div class="sb-formula">média / 5 × 10</div>
+            <div class="sb-range">0 – 10.0</div>
+        </div>
+        <div class="score-arrow">→</div>
+        <div class="score-box">
+            <div class="sb-label">Seção</div>
+            <div class="sb-formula">Σ(bloco × peso)</div>
+            <div class="sb-range">peso total = 100%</div>
+        </div>
+        <div class="score-arrow">→</div>
+        <div class="score-box final">
+            <div class="sb-label">Nota Final</div>
+            <div class="sb-formula">(S1 + S2) ÷ 2</div>
+            <div class="sb-range">0 – 10.0</div>
+        </div>
+    </div>
+
+    <div class="info-box green">
+        <strong>Atualização em tempo real:</strong> A cada resposta marcada, o app percorre o
+        mapa <code>_questionBlockMap</code> (dicionário construído na renderização) para encontrar
+        o bloco correspondente em O(1) — sem iterar sobre toda a estrutura. O badge do bloco,
+        a barra de progresso global e a nota final são atualizados instantaneamente.
+    </div>
+
+    <div class="info-box blue">
+        <strong>Seção 1 — Pesos distintos por bloco:</strong>
+        4 blocos com pesos diferenciados que somam 100%.<br>
+        <strong>Seção 2 — Pesos iguais:</strong>
+        8 blocos com 12,5% cada (total 100%).
+        A nota final é a média aritmética entre as duas seções (50% + 50%).
+    </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════ PÁG 5 — DIFERENCIAIS ══════════════ -->
+<div class="page">
+<div class="page-inner">
+
+    <div class="page-header">
+        <span class="page-header-brand">Trilhas de Alta Performance</span>
+        <img src="logo.png" alt="FG" class="page-logo-small">
+        <span class="page-header-num">Diferenciais · pág. 5</span>
+    </div>
+
+    <div class="section-eyebrow">Por que este App é Diferente</div>
+    <h2 class="section-heading">10 Diferenciais <span>Técnicos</span></h2>
+    <p class="section-lead">Cada decisão técnica foi tomada com foco em <strong>zero custo de servidor</strong>, máxima <strong>compatibilidade mobile</strong> e <strong>experiência premium</strong> para o auditor.</p>
+
+    <div class="diff-grid">
+        <div class="diff-card">
+            <div class="diff-num">01</div>
+            <div class="diff-title">Zero Backend — Zero Custo de Servidor</div>
+            <div class="diff-desc">Nenhuma linha de código em servidor. Sem banco de dados ou API. O custo de hospedagem é estático e gratuito.</div>
+        </div>
+        <div class="diff-card">
+            <div class="diff-num">02</div>
+            <div class="diff-title">Offline-First com Service Worker</div>
+            <div class="diff-desc">Funciona 100% offline após o primeiro acesso. O cache garante código atualizado e arquivos sempre disponíveis.</div>
+        </div>
+        <div class="diff-card">
+            <div class="diff-num">03</div>
+            <div class="diff-title">Instalável — iOS e Android</div>
+            <div class="diff-desc">Adicionável à tela inicial via manifest.json. Abre como app nativo sem depender de App Store ou Google Play.</div>
+        </div>
+        <div class="diff-card">
+            <div class="diff-num">04</div>
+            <div class="diff-title">PDF Export Compatível com iOS Safari</div>
+            <div class="diff-desc">Evita o bloqueio do Safari ao converter a logo para base64 antecipadamente, tornando a geração 100% síncrona.</div>
+        </div>
+        <div class="diff-card">
+            <div class="diff-num">05</div>
+            <div class="diff-title">PDF com Logo Embarcada — Offline</div>
+            <div class="diff-desc">Relatório gerado em Blob HTML com logo base64. Independe de rede ou CDN para criar ou abrir o documento.</div>
+        </div>
+        <div class="diff-card">
+            <div class="diff-num">06</div>
+            <div class="diff-title">Score em Tempo Real O(1)</div>
+            <div class="diff-desc">Nota atualizada a cada resposta. O uso de mapa elimina buscas lineares e garante um cálculo imediato.</div>
+        </div>
+        <div class="diff-card">
+            <div class="diff-num">07</div>
+            <div class="diff-title">Auto-save e Retomada de Auditoria</div>
+            <div class="diff-desc">Respostas salvas no localStorage. Permite retomar a auditoria exatamente de onde parou caso o app feche.</div>
+        </div>
+        <div class="diff-card">
+            <div class="diff-num">08</div>
+            <div class="diff-title">Som Sintético via Web Audio API</div>
+            <div class="diff-desc">Melodia gerada ao vivo com osciladores digitais. Não exige arquivos de áudio nem uso de rede (offline).</div>
+        </div>
+        <div class="diff-card">
+            <div class="diff-num">09</div>
+            <div class="diff-title">Design Glassmorphism Premium</div>
+            <div class="diff-desc">Efeito <code>backdrop-filter</code>, orbs animados, ícone em SVG e fontes variáveis, garantindo estética avançada.</div>
+        </div>
+        <div class="diff-card">
+            <div class="diff-num">10</div>
+            <div class="diff-title">100% Responsivo — Mobile-first</div>
+            <div class="diff-desc">Respeita áreas seguras (<code>safe-area</code>), evita zoom em inputs no iOS e garante toques acessíveis (44px).</div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════ PÁG 6 — COMPARATIVO ══════════════ -->
+<div class="page">
+<div class="page-inner">
+
+    <div class="page-header">
+        <span class="page-header-brand">Trilhas de Alta Performance</span>
+        <img src="logo.png" alt="FG" class="page-logo-small">
+        <span class="page-header-num">Comparativo · pág. 6</span>
+    </div>
+
+    <div class="section-eyebrow">Comparativo de Mercado</div>
+    <h2 class="section-heading">Trilhas vs. <span>Alternativas</span></h2>
+    <p class="section-lead">
+        Comparação com as abordagens tradicionais e soluções genéricas de formulário.
+    </p>
+
+    <table class="compare-table">
+        <thead>
+            <tr>
+                <th>Critério</th>
+                <th>Trilhas (este app)</th>
+                <th>Google Forms / Typeform</th>
+                <th>Planilha Excel</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Funciona offline</strong></td>
+                <td><span class="check">✓</span> Service Worker</td>
+                <td><span class="cross">✗</span> Requer internet</td>
+                <td><span class="check">✓</span> Local</td>
+            </tr>
+            <tr>
+                <td><strong>Instalável no celular</strong></td>
+                <td><span class="check">✓</span> PWA nativo</td>
+                <td><span class="partial">~</span> Link apenas</td>
+                <td><span class="cross">✗</span> Não</td>
+            </tr>
+            <tr>
+                <td><strong>PDF com logo da marca</strong></td>
+                <td><span class="check">✓</span> Embutido, offline</td>
+                <td><span class="partial">~</span> Pago / limitado</td>
+                <td><span class="partial">~</span> Manual</td>
+            </tr>
+            <tr>
+                <td><strong>Nota ponderada automática</strong></td>
+                <td><span class="check">✓</span> Algoritmo próprio</td>
+                <td><span class="cross">✗</span> Não</td>
+                <td><span class="partial">~</span> Fórmulas manuais</td>
+            </tr>
+            <tr>
+                <td><strong>Custo de servidor mensal</strong></td>
+                <td><span class="check">✓</span> R$ 0,00</td>
+                <td><span class="partial">~</span> R$ 0–R$ 400+</td>
+                <td><span class="check">✓</span> R$ 0,00</td>
+            </tr>
+            <tr>
+                <td><strong>Design e UX personalizada</strong></td>
+                <td><span class="check">✓</span> 100% da marca</td>
+                <td><span class="partial">~</span> Templates genéricos</td>
+                <td><span class="cross">✗</span> Planilha</td>
+            </tr>
+            <tr>
+                <td><strong>Auto-save e retomada</strong></td>
+                <td><span class="check">✓</span> localStorage</td>
+                <td><span class="partial">~</span> Rascunhos online</td>
+                <td><span class="cross">✗</span> Não</td>
+            </tr>
+            <tr>
+                <td><strong>Nota em tempo real</strong></td>
+                <td><span class="check">✓</span> A cada resposta</td>
+                <td><span class="cross">✗</span> Apenas ao final</td>
+                <td><span class="partial">~</span> Recalculo manual</td>
+            </tr>
+            <tr>
+                <td><strong>Compatível com iOS Safari PDF</strong></td>
+                <td><span class="check">✓</span> Fix específico</td>
+                <td><span class="partial">~</span> Depende da versão</td>
+                <td><span class="cross">✗</span> Não</td>
+            </tr>
+            <tr>
+                <td><strong>Experiência de marca premium</strong></td>
+                <td><span class="check">✓</span> Glassmorphism + animações</td>
+                <td><span class="cross">✗</span> Branding genérico</td>
+                <td><span class="cross">✗</span> Nenhuma</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="summary-grid">
+        <div class="summary-card">
+            <div class="sc-num">12</div>
+            <div class="sc-label">Tecnologias Web</div>
+        </div>
+        <div class="summary-card">
+            <div class="sc-num">8</div>
+            <div class="sc-label">Animações CSS</div>
+        </div>
+        <div class="summary-card">
+            <div class="sc-num">0</div>
+            <div class="sc-label">Dependências NPM</div>
+        </div>
+        <div class="summary-card">
+            <div class="sc-num">R$0</div>
+            <div class="sc-label">Custo de Servidor</div>
+        </div>
+        <div class="summary-card">
+            <div class="sc-num">100%</div>
+            <div class="sc-label">Offline-ready</div>
+        </div>
+        <div class="summary-card">
+            <div class="sc-num">iOS+</div>
+            <div class="sc-label">Compatibilidade</div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════ ENCERRAMENTO ══════════════════════ -->
+<div class="page closing">
+    <img src="logo.png" alt="Frutos de Goiás" class="closing-logo">
+    <h2>Trilhas de Alta Performance</h2>
+    <p>
+        WebApp sob medida para a rede Frutos de Goiás.<br>
+        Tecnologia de ponta, zero servidor, experiência premium —
+        na palma da mão do consultor.
+    </p>
+    <div class="closing-pill">
+        ✦ &nbsp; Frutos de Goiás · Sistema Trilhas · 2026 &nbsp; ✦
+    </div>
+</div>
+
+<script>
+// Instruções ao abrir no browser
+window.addEventListener('load', () => {
+    const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+        document.querySelector('.print-btn').textContent =
+            '⬇ Compartilhar → Imprimir → Salvar como PDF';
+    }
+});
+</script>
+
+</body>
+</html>

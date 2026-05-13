@@ -5,6 +5,8 @@ const app = {
     blockDiagnoses: {},
     metadata: {},
     _pdf: null,
+    _logoBase64: null,
+    _questionBlockMap: null,
 
     // ── Persistence ──────────────────────────────────────────────────────────
     saveProgress: function () {
@@ -64,6 +66,17 @@ const app = {
             return;
         }
 
+        // Pre-fetch logo as base64 — makes exportPDF() fully synchronous (iOS fix)
+        try {
+            const r = await fetch('logo.png');
+            const b = await r.blob();
+            this._logoBase64 = await new Promise(res => {
+                const fr = new FileReader();
+                fr.onloadend = () => res(fr.result);
+                fr.readAsDataURL(b);
+            });
+        } catch (_) {}
+
         const saved = this.loadProgress();
         if (saved?.metadata?.unitName) {
             const d = new Date(saved.savedAt).toLocaleString('pt-BR');
@@ -79,7 +92,9 @@ const app = {
         const t = document.getElementById('toast');
         t.innerText = msg;
         t.style.display = 'block';
-        t.style.background = type === 'error' ? '#ef4444' : '#00ff88';
+        t.style.background = type === 'error' ? 'rgba(239,68,68,0.95)' : 'rgba(10,20,40,0.95)';
+        t.style.borderColor = type === 'error' ? 'rgba(239,68,68,0.5)' : 'rgba(0,255,136,0.3)';
+        t.style.color = type === 'error' ? '#fff' : '#e2e8f0';
         setTimeout(() => t.style.display = 'none', 3500);
     },
 
@@ -105,6 +120,7 @@ const app = {
 
     // ── Render Form ───────────────────────────────────────────────────────────
     renderForm: function () {
+        this._questionBlockMap = {};
         const container = document.getElementById('audit-form-container');
         container.innerHTML = '';
 
@@ -137,19 +153,19 @@ const app = {
         });
 
         if (this.questions.pillars?.length) {
-            container.appendChild(this._sectionHeading('PRIMEIRA SEÇÃO: INSPEÇÃO DA UNIDADE E SEU FUNCIONAMENTO'));
+            container.appendChild(this._sectionHeading('PRIMEIRA SEÇÃO — INSPEÇÃO DA UNIDADE'));
             this.questions.pillars.forEach(p => container.appendChild(this._renderPillar(p, true)));
         }
 
         if (this.questions.pillars_section2?.length) {
-            container.appendChild(this._sectionHeading('SEGUNDA SEÇÃO: GESTÃO'));
+            container.appendChild(this._sectionHeading('SEGUNDA SEÇÃO — GESTÃO'));
             this.questions.pillars_section2.forEach(p => container.appendChild(this._renderPillar(p, false)));
         }
 
         document.getElementById('step-final').classList.remove('hidden');
         document.getElementById('step-final').classList.add('active');
         this.restoreUIState();
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     },
 
     _sectionHeading: function (text) {
@@ -171,10 +187,19 @@ const app = {
         }
 
         pillar.blocks.forEach(block => {
+            // Register all questions in the map for progress tracking
+            block.questions.forEach(q => { this._questionBlockMap[q.id] = block; });
+
             const bDiv = document.createElement('div');
             bDiv.className = 'block-card';
+
             const wtag = (showWeight && block.weight) ? `<span class="weight-tag">${block.weight}%</span>` : '';
-            bDiv.innerHTML = `<h3 class="block-title">${block.name}${wtag}</h3>`;
+            const totalQ = block.questions.length;
+            bDiv.innerHTML = `
+                <h3 class="block-title">
+                    <span>${block.name}${wtag}</span>
+                    <span class="block-progress" id="progress-${block.id}">0/${totalQ}</span>
+                </h3>`;
 
             block.questions.forEach(q => {
                 const qRow = document.createElement('div');
@@ -201,7 +226,7 @@ const app = {
                         <div class="question-text">${q.text}</div>
                         <div class="topics-container" id="opts-${q.id}">${topicsHtml}</div>
                         <div class="question-score-line">
-                            Nota desta questão: <span id="score-${q.id}">0.0</span> / 5.0
+                            Nota: <span id="score-${q.id}">0.0</span> / 5.0
                         </div>`;
                 } else {
                     qRow.innerHTML = `
@@ -221,7 +246,7 @@ const app = {
             const diagDiv = document.createElement('div');
             diagDiv.className = 'block-diagnosis-field';
             diagDiv.innerHTML = `
-                <label class="diagnosis-label">Diagnóstico do Bloco (opcional):</label>
+                <label class="diagnosis-label">Diagnóstico do Bloco (opcional)</label>
                 <textarea id="diag-${block.id}" maxlength="300" rows="2"
                     placeholder="Observações do auditor para este bloco..."
                     oninput="app.setBlockDiagnosis('${block.id}',this.value)"></textarea>
@@ -257,6 +282,14 @@ const app = {
             const counter = document.getElementById('counter-' + blockId);
             if (counter) counter.innerText = value.length + '/300';
         }
+
+        // Restore block progress counters
+        const allBlocks = [
+            ...(this.questions.pillars?.flatMap(p => p.blocks) || []),
+            ...(this.questions.pillars_section2?.flatMap(p => p.blocks) || [])
+        ];
+        allBlocks.forEach(b => this._updateBlockProgress(b));
+
         this.calculateTotal();
     },
 
@@ -270,6 +303,7 @@ const app = {
 
     setScore: function (qId, score) {
         this.responses[qId] = score;
+        if (this._questionBlockMap?.[qId]) this._updateBlockProgress(this._questionBlockMap[qId]);
         this.calculateTotal();
         this.saveProgress();
     },
@@ -282,7 +316,6 @@ const app = {
         for (const v of Object.values(this.topicResponses[qId])) {
             if (v === 'conforme') conformes++;
         }
-        // Tópicos não respondidos contam como "não conforme" (pior nota)
         const score = (conformes / totalTopics) * 5;
         this.responses[qId] = score;
 
@@ -292,6 +325,7 @@ const app = {
         document.getElementById(`label-conforme-${qId}-${index}`)?.classList.toggle('selected', value === 'conforme');
         document.getElementById(`label-nconforme-${qId}-${index}`)?.classList.toggle('selected', value === 'naoconforme');
 
+        if (this._questionBlockMap?.[qId]) this._updateBlockProgress(this._questionBlockMap[qId]);
         this.calculateTotal();
         this.saveProgress();
     },
@@ -303,23 +337,40 @@ const app = {
         this.saveProgress();
     },
 
-    // ── Score Calculation ─────────────────────────────────────────────────────
+    // ── Progress Tracking ─────────────────────────────────────────────────────
+    _updateBlockProgress: function (block) {
+        const el = document.getElementById('progress-' + block.id);
+        if (!el) return;
+        const answered = block.questions.filter(q => this.responses[q.id] !== undefined).length;
+        const total = block.questions.length;
+        el.innerText = `${answered}/${total}`;
+        el.classList.toggle('complete', answered === total && total > 0);
+    },
 
-    // Nota de um bloco (0–10).
-    // Questões não respondidas = 0 (pior nota), dividindo sempre pelo total do bloco.
-    // Garante que seções não preenchidas não inflem a média.
+    _updateAuditProgress: function () {
+        const fill = document.getElementById('audit-progress-fill');
+        if (!fill || !this.questions) return;
+        const allBlocks = [
+            ...(this.questions.pillars?.flatMap(p => p.blocks) || []),
+            ...(this.questions.pillars_section2?.flatMap(p => p.blocks) || [])
+        ];
+        const totalQ    = allBlocks.reduce((s, b) => s + b.questions.length, 0);
+        const answeredQ = allBlocks.reduce((s, b) =>
+            s + b.questions.filter(q => this.responses[q.id] !== undefined).length, 0);
+        if (totalQ > 0) fill.style.width = ((answeredQ / totalQ) * 100).toFixed(1) + '%';
+    },
+
+    // ── Score Calculation ─────────────────────────────────────────────────────
     _blockScore: function (block) {
         const total = block.questions.length;
         if (total === 0) return 0;
         let sum = 0;
         block.questions.forEach(q => {
-            // Não respondida = 0; escala de questão é 0-5
             sum += (this.responses[q.id] !== undefined) ? parseFloat(this.responses[q.id]) : 0;
         });
-        return (sum / total / 5) * 10; // converte para 0-10
+        return (sum / total / 5) * 10;
     },
 
-    // Nota de uma seção (0–10): média ponderada dos blocos pelos pesos definidos no JSON.
     _sectionScore: function (pillars) {
         let weightedSum = 0, totalWeight = 0;
         pillars.forEach(pillar => {
@@ -332,7 +383,6 @@ const app = {
         return totalWeight > 0 ? weightedSum / totalWeight : 0;
     },
 
-    // Nota Final = Seção 1 × 50% + Seção 2 × 50%
     calculateTotal: function () {
         const sec1 = this._sectionScore(this.questions.pillars);
         const sec2 = this.questions.pillars_section2?.length
@@ -349,14 +399,16 @@ const app = {
         badge.style.borderColor = color;
         scoreEl.style.color     = color;
         document.querySelector('.score-badge .label').innerText = label;
+
+        this._updateAuditProgress();
     },
 
     _gradeOf: function (score) {
-        if (score < 6)  return { color: '#ef4444', label: '🔴 CRÍTICA' };
-        if (score < 7)  return { color: '#f97316', label: '🟠 ATENÇÃO' };
-        if (score < 8)  return { color: '#eab308', label: '🟡 REGULAR' };
-        if (score < 9)  return { color: '#22c55e', label: '🟢 BOA' };
-        return          { color: '#3b82f6',        label: '🔵 ALTA PERFORMANCE' };
+        if (score < 6)  return { color: '#ef4444', label: 'CRÍTICA'         };
+        if (score < 7)  return { color: '#f97316', label: 'ATENÇÃO'         };
+        if (score < 8)  return { color: '#eab308', label: 'REGULAR'         };
+        if (score < 9)  return { color: '#22c55e', label: 'BOA'             };
+        return          { color: '#3b82f6',         label: 'ALTA PERFORMANCE' };
     },
 
     // ── Validation ────────────────────────────────────────────────────────────
@@ -372,6 +424,61 @@ const app = {
         return empty;
     },
 
+    // ── Loading Overlay ───────────────────────────────────────────────────────
+    _playLoadingSound: function () {
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            const ctx = new AudioCtx();
+            // Pentatonic ascending: C5 E5 G5 A5 C6
+            [523.25, 659.25, 783.99, 880, 1046.50].forEach((freq, i) => {
+                const osc  = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'triangle';
+                osc.frequency.value = freq;
+                const t = ctx.currentTime + i * 0.18;
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.22, t + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+                osc.start(t);
+                osc.stop(t + 0.5);
+            });
+            // Closing C-major chord
+            [523.25, 659.25, 783.99].forEach(freq => {
+                const osc  = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                const t = ctx.currentTime + 5 * 0.18 + 0.06;
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.09, t + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.9);
+                osc.start(t);
+                osc.stop(t + 1.0);
+            });
+        } catch (_) {}
+    },
+
+    showLoading: function () {
+        const el = document.getElementById('loading-overlay');
+        el.classList.remove('hidden', 'fade-out');
+        this._playLoadingSound();
+    },
+
+    hideLoading: function (cb) {
+        const el = document.getElementById('loading-overlay');
+        el.classList.add('fade-out');
+        setTimeout(() => {
+            el.classList.add('hidden');
+            el.classList.remove('fade-out');
+            if (cb) cb();
+        }, 420);
+    },
+
     // ── Submit & Report ───────────────────────────────────────────────────────
     submitAudit: function () {
         const empty = this._emptyBlocks();
@@ -380,35 +487,85 @@ const app = {
             if (!confirm(`Os seguintes blocos estão sem resposta:\n\n${list}\n\nQuestões não respondidas serão contabilizadas com nota 0.\nDeseja finalizar mesmo assim?`)) return;
         }
 
-        // Calcular notas frescas (não ler do DOM)
-        const sec1  = this._sectionScore(this.questions.pillars);
-        const sec2  = this.questions.pillars_section2?.length
-            ? this._sectionScore(this.questions.pillars_section2)
-            : null;
-        const total = sec2 !== null ? (sec1 + sec2) / 2 : sec1;
+        this.showLoading();
 
-        const summary = document.getElementById('final_diagnosis').value.trim();
-        const { unitName, city, inspector, date } = this.metadata;
-        const { color, label } = this._gradeOf(total);
+        setTimeout(() => {
+            const sec1  = this._sectionScore(this.questions.pillars);
+            const sec2  = this.questions.pillars_section2?.length
+                ? this._sectionScore(this.questions.pillars_section2)
+                : null;
+            const total = sec2 !== null ? (sec1 + sec2) / 2 : sec1;
 
-        // Construir HTML enquanto responses/blockDiagnoses ainda estão preenchidos
-        const reportHTML    = this._buildReportHTML({ sec1, sec2, total, color, label, unitName, city, inspector, date, summary });
-        const pdfBodyHTML   = this._buildReportHTML({ sec1, sec2, total, color, label, unitName, city, inspector, date, summary }, true);
+            const summary = document.getElementById('final_diagnosis').value.trim();
+            const { unitName, city, inspector, date } = this.metadata;
+            const { color, label } = this._gradeOf(total);
 
-        // Cachear para exportPDF (clearProgress limpa responses e metadata)
-        this._pdf = {
-            bodyHTML: pdfBodyHTML,
-            filename: `Auditoria_${(unitName || 'relatorio').replace(/[^a-zA-Z0-9]/g,'_')}_${(date || '').replace(/-/g,'')}`
-        };
+            const logoSrc    = this._logoBase64 || 'logo.png';
+            const reportHTML = this._buildReportHTML({ sec1, sec2, total, color, label, unitName, city, inspector, date, summary });
+            const pdfBody    = this._buildReportHTML({ sec1, sec2, total, color, label, unitName, city, inspector, date, summary }, true)
+                                  .replace(/src="logo\.png"/g, `src="${logoSrc}"`);
 
-        document.getElementById('printable-report').innerHTML = reportHTML;
-        document.getElementById('step-final').classList.add('hidden');
-        document.getElementById('audit-form-container').innerHTML = '';
-        document.getElementById('step-0').classList.add('hidden');
-        document.getElementById('results-dashboard').classList.remove('hidden');
-        document.getElementById('results-dashboard').classList.add('active');
-        this.clearProgress();
-        window.scrollTo(0, 0);
+            const filename = `Auditoria_${(unitName || 'relatorio').replace(/[^a-zA-Z0-9]/g,'_')}_${(date || '').replace(/-/g,'')}`;
+
+            this._pdf = {
+                fullHTML: this._buildPDFDocument(pdfBody, filename),
+                filename
+            };
+
+            document.getElementById('printable-report').innerHTML = reportHTML;
+            document.getElementById('step-final').classList.add('hidden');
+            document.getElementById('audit-form-container').innerHTML = '';
+            document.getElementById('step-0').classList.add('hidden');
+            document.getElementById('results-dashboard').classList.remove('hidden');
+            document.getElementById('results-dashboard').classList.add('active');
+
+            const fill = document.getElementById('audit-progress-fill');
+            if (fill) fill.style.width = '100%';
+
+            this.clearProgress();
+            this.hideLoading(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
+        }, 2600);
+    },
+
+    // ── PDF Document Builder ──────────────────────────────────────────────────
+    _buildPDFDocument: function (bodyHTML, filename) {
+        const CSS = `
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#1e293b;padding:22px 26px;font-size:10.5pt;line-height:1.5}
+h2{font-size:15pt;color:#0f172a;margin:8px 0}
+.report-header{text-align:center;border-bottom:2px solid #e2e8f0;padding-bottom:14px;margin-bottom:14px}
+.report-header img{max-width:110px;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto}
+.report-header p{color:#64748b;font-size:8.5pt;margin:2px 0}
+.report-meta{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:16px;background:#f8fafc;padding:12px 16px;border-radius:6px;border:1px solid #e2e8f0;font-size:9pt}
+.report-meta p{margin:0}.report-meta strong{color:#0f172a}
+.report-score{text-align:center;font-size:22pt;font-weight:800;margin:14px 0;line-height:1.2}
+.report-section-scores{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 0 16px;padding:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px}
+.section-score-box{display:flex;flex-direction:column;align-items:center;min-width:95px;background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px}
+.section-score-box.section-score-final{border-color:#0ea5e9;background:#f0f9ff}
+.ssb-label{font-size:6.5pt;color:#64748b;text-transform:uppercase;letter-spacing:.3px;text-align:center;margin-bottom:2px}
+.ssb-value{font-size:17pt;font-weight:700;line-height:1}.ssb-sub{font-size:6.5pt;color:#94a3b8;margin-top:2px}
+.section-score-divider{font-size:13pt;font-weight:700;color:#94a3b8}
+.report-section{margin-bottom:14px;page-break-inside:avoid}
+.report-section-title{background:#0ea5e9;color:#fff;padding:8px 13px;border-radius:5px;margin-bottom:5px;font-size:8.5pt;text-transform:uppercase;letter-spacing:.4px;display:flex;justify-content:space-between;align-items:center}
+.section-title-score{font-size:8.5pt;font-weight:700;background:rgba(255,255,255,0.2);padding:2px 6px;border-radius:3px;white-space:nowrap}
+.report-section h3:not(.report-section-title){background:#f1f5f9;padding:7px 12px;border-left:4px solid #0ea5e9;margin-bottom:5px;font-size:9pt}
+.report-item{display:flex;justify-content:space-between;align-items:center;padding:6px 13px;border-bottom:1px solid #e2e8f0;font-size:9pt;page-break-inside:avoid}
+.report-item .grade{font-weight:700;min-width:58px;text-align:right;font-size:9pt}
+.report-block-diag{font-size:8pt;color:#475569;background:#fffbeb;border-left:3px solid #fbbf24;padding:5px 12px 6px;margin:0 0 3px;word-break:break-word;white-space:pre-wrap;line-height:1.4;page-break-inside:avoid}
+.report-executive-summary{padding:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:5px;font-size:9pt;line-height:1.5;color:#334155;white-space:pre-wrap;word-break:break-word}
+.report-footer{margin-top:18px;padding-top:10px;border-top:1px solid #e2e8f0;text-align:center;font-size:7pt;color:#94a3b8}
+@media print{body{padding:12px 16px}.report-section{page-break-inside:avoid}.report-item{page-break-inside:avoid}.report-block-diag{page-break-inside:avoid}}`;
+
+        return `<!DOCTYPE html>
+<html lang="pt-br"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${filename}</title>
+<style>${CSS}</style>
+</head><body>
+${bodyHTML}
+<script>window.onload=function(){setTimeout(function(){window.print();},400)};<\/script>
+</body></html>`;
     },
 
     // ── Report HTML Builder ───────────────────────────────────────────────────
@@ -437,8 +594,8 @@ const app = {
 
         const buttons = forPrint ? '' : `
             <div class="no-print" style="margin-bottom:24px;text-align:center;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-                <button class="btn-submit" style="display:inline-block;width:auto;margin:0;" onclick="app.exportPDF()">⬇️ Baixar PDF</button>
-                <button class="btn-outline" style="display:inline-block;width:auto;margin:0;" onclick="window.print()">🖨️ Imprimir</button>
+                <button class="btn-submit" style="display:inline-block;width:auto;margin:0;" onclick="app.exportPDF()">Baixar PDF</button>
+                <button class="btn-outline" style="display:inline-block;width:auto;margin:0;" onclick="window.print()">Imprimir</button>
                 <button class="btn-outline" style="display:inline-block;width:auto;margin:0;" onclick="location.reload()">Nova Auditoria</button>
             </div>`;
 
@@ -468,7 +625,7 @@ const app = {
         <div class="report-header">
             <img src="logo.png" alt="Frutos de Goiás" style="max-width:130px;margin-bottom:12px;">
             <h2>Relatório de Auditoria</h2>
-            <p style="color:#64748b;font-size:0.9rem;">Trilhas de Alta Performance</p>
+            <p>Trilhas de Alta Performance</p>
         </div>
         <div class="report-meta">
             <p><strong>Unidade:</strong> ${unitName}</p>
@@ -477,8 +634,8 @@ const app = {
             <p><strong>Data:</strong> ${date}</p>
         </div>
         <div class="report-score" style="color:${color};">
-            Nota Final: ${fmt(total)}
-            <div style="font-size:1.1rem;margin-top:4px;">${label}</div>
+            ${fmt(total)}
+            <div style="font-size:1rem;margin-top:6px;font-weight:600;">${label}</div>
         </div>
         ${decomposition}
         ${this.questions.pillars ? sectionBlock(this.questions.pillars, 'SEÇÃO 1 – INSPEÇÃO DA UNIDADE', sec1) : ''}
@@ -487,68 +644,30 @@ const app = {
         <div class="report-footer">Gerado em ${new Date().toLocaleString('pt-BR')} · Sistema Trilhas de Alta Performance</div>`;
     },
 
-    // ── PDF Export — Blob URL, logo inline como base64 ───────────────────────
-    exportPDF: async function () {
+    // ── PDF Export — Fully synchronous (iOS Safari compatible) ───────────────
+    // Logo is pre-fetched as base64 at init(), so no await is needed here.
+    // window.open() called synchronously from user gesture → iOS popup blocker won't fire.
+    exportPDF: function () {
         if (!this._pdf) {
             this.showToast('Finalize a auditoria antes de exportar o PDF.', 'error');
             return;
         }
 
-        // Embutir logo como base64 para funcionar dentro do blob URL
-        let logoSrc = 'logo.png';
-        try {
-            const resp  = await fetch('logo.png');
-            const blob  = await resp.blob();
-            logoSrc     = await new Promise(res => {
-                const r = new FileReader();
-                r.onloadend = () => res(r.result);
-                r.readAsDataURL(blob);
-            });
-        } catch (_) {}
-
-        const bodyHTML = this._pdf.bodyHTML.replace(/src="logo\.png"/g, `src="${logoSrc}"`);
-        const filename = this._pdf.filename;
-
-        const CSS = `
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#1e293b;padding:22px 26px;font-size:10.5pt;line-height:1.45}
-h2{font-size:15pt;color:#1e293b;margin:8px 0}
-.report-header{text-align:center;border-bottom:2px solid #e2e8f0;padding-bottom:14px;margin-bottom:14px}
-.report-header img{max-width:110px;margin-bottom:8px}
-.report-header p{color:#64748b;font-size:8.5pt;margin:2px 0}
-.report-meta{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:16px;background:#f8fafc;padding:12px 16px;border-radius:6px;border:1px solid #e2e8f0;font-size:9pt}
-.report-meta p{margin:0}.report-meta strong{color:#334155}
-.report-score{text-align:center;font-size:21pt;font-weight:700;margin:14px 0;line-height:1.2}
-.report-section-scores{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 0 16px;padding:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px}
-.section-score-box{display:flex;flex-direction:column;align-items:center;min-width:95px;background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px}
-.section-score-box.section-score-final{border-color:#0ea5e9;background:#f0f9ff}
-.ssb-label{font-size:6.5pt;color:#64748b;text-transform:uppercase;letter-spacing:.3px;text-align:center;margin-bottom:2px}
-.ssb-value{font-size:17pt;font-weight:700;line-height:1}.ssb-sub{font-size:6.5pt;color:#94a3b8;margin-top:2px}
-.section-score-divider{font-size:13pt;font-weight:700;color:#94a3b8}
-.report-section{margin-bottom:14px;page-break-inside:avoid}
-.report-section-title{background:#0ea5e9;color:#fff;padding:8px 13px;border-radius:5px;margin-bottom:5px;font-size:8.5pt;text-transform:uppercase;letter-spacing:.4px;display:flex;justify-content:space-between;align-items:center}
-.section-title-score{font-size:8.5pt;font-weight:700}
-.report-section h3:not(.report-section-title){background:#f1f5f9;padding:7px 12px;border-left:4px solid #0ea5e9;margin-bottom:5px;font-size:9pt}
-.report-item{display:flex;justify-content:space-between;align-items:center;padding:6px 13px;border-bottom:1px solid #e2e8f0;font-size:9pt;page-break-inside:avoid}
-.report-item .grade{font-weight:700;min-width:58px;text-align:right;font-size:9pt}
-.report-block-diag{font-size:8pt;color:#475569;background:#fffbeb;border-left:3px solid #fbbf24;padding:5px 12px 6px;margin:0 0 3px;word-break:break-word;white-space:pre-wrap;line-height:1.4;page-break-inside:avoid}
-.report-executive-summary{padding:11px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;font-size:9pt;line-height:1.5;color:#334155;white-space:pre-wrap;word-break:break-word}
-.report-footer{margin-top:18px;padding-top:10px;border-top:1px solid #e2e8f0;text-align:center;font-size:7pt;color:#94a3b8}
-@media print{body{padding:12px 16px}.report-section{page-break-inside:avoid}.report-item{page-break-inside:avoid}.report-block-diag{page-break-inside:avoid}}`;
-
-        const fullHTML = `<!DOCTYPE html>
-<html lang="pt-br"><head>
-<meta charset="UTF-8"><title>${filename}</title>
-<style>${CSS}</style>
-</head><body>
-${bodyHTML}
-<script>window.onload=function(){setTimeout(function(){window.print();},350)};<\/script>
-</body></html>`;
-
-        const blob = new Blob([fullHTML], { type: 'text/html;charset=utf-8' });
+        const blob = new Blob([this._pdf.fullHTML], { type: 'text/html;charset=utf-8' });
         const url  = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-        // libera memória após tempo suficiente para o print dialog abrir
+        const w    = window.open(url, '_blank');
+
+        if (!w || w.closed) {
+            // Fallback: navigate current tab (iOS Share → Print → Salvar em PDF)
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
         setTimeout(() => URL.revokeObjectURL(url), 120000);
     }
 };
